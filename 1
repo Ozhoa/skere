@@ -1,0 +1,50 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public class RegistroAutomoviles {
+    private List<Automovil> lista = new ArrayList<>();
+
+    public RegistroAutomoviles() {
+        lista.add(new Automovil("A1", "Toyota", "Yaris", 12000));
+        lista.add(new Automovil("B2", "Hyundai", "Accent", 11000));
+        lista.add(new Automovil("C3", "Toyota", "Corolla", 15000));
+        lista.add(new Automovil("D4", "Chevrolet", "Spark", 9500));
+    }
+
+    public List<Automovil> getLista() {
+        return lista;
+    }
+
+    public void agregarOActualizar(Automovil nuevo) {
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).getCodigo().equalsIgnoreCase(nuevo.getCodigo())) {
+                lista.set(i, nuevo); // Actualiza en la misma posición
+                return;
+            }
+        }
+        lista.add(nuevo); // Agrega al final si es nuevo
+    }
+
+    public List<Automovil> filtrarYOrdenar(String marca, double precioMinimo) {
+        List<Automovil> resultado = new ArrayList<>();
+        for (Automovil a : lista) {
+            if (a.getMarca().equalsIgnoreCase(marca) && a.getPrecio() > precioMinimo) {
+                resultado.add(a);
+            }
+        }
+        resultado.sort(Comparator.comparingDouble(Automovil::getPrecio).reversed());
+        return resultado;
+    }
+
+    public int contarPorMarca(String marca) {
+        return contarRecursivo(marca, 0);
+    }
+
+    private int contarRecursivo(String marca, int index) {
+        if (index >= lista.size()) return 0;
+        Automovil actual = lista.get(index);
+        return (actual.getMarca().equalsIgnoreCase(marca) ? 1 : 0)
+                + contarRecursivo(marca, index + 1);
+    }
+}
