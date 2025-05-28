@@ -1,0 +1,86 @@
+import javax.swing.*; import java.util.List;
+
+public class Ventana { private JPanel Principal; private JTabbedPane tabbedPane1;
+
+// Pestaña "Ingresar"
+private JTextField txtCodigo;
+private JTextField txtModelo;
+private JTextField txtMarca;
+private JTextField txtPrecio;
+private JButton btnAgregarActualizar;
+
+// Pestaña "Filtro y ordenar"
+private JTextField txtMarcaFiltro;
+private JTextField txtPrecioFiltro;
+private JButton btnFiltrarOrdenar;
+private JTextArea txtAreaFiltro;
+
+// Pestaña "Conteo recursivo"
+private JTextField txtMarcaConteo;
+private JButton btnContar;
+private JTextArea txtAreaConteo;
+
+private RegistroAutomoviles registro = new RegistroAutomoviles();
+
+public Ventana() {
+    // Literal 1: Agregar o actualizar
+    btnAgregarActualizar.addActionListener(e -> {
+        try {
+            Automovil auto = new Automovil(
+                    txtCodigo.getText().trim(),
+                    txtMarca.getText().trim(),
+                    txtModelo.getText().trim(),
+                    Double.parseDouble(txtPrecio.getText().trim())
+            );
+            registro.agregarOActualizar(auto);
+            JOptionPane.showMessageDialog(Principal, "Agregado/Actualizado correctamente");
+            limpiarIngreso();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(Principal, "Error en los datos ingresados");
+        }
+    });
+
+    // Literal 2: Filtro por marca y precio, orden descendente
+    btnFiltrarOrdenar.addActionListener(e -> {
+        try {
+            String marca = txtMarcaFiltro.getText().trim();
+            double precioMin = Double.parseDouble(txtPrecioFiltro.getText().trim());
+            List<Automovil> lista = registro.filtrarYOrdenar(marca, precioMin);
+            mostrarEnArea(lista, txtAreaFiltro);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(Principal, "Datos inválidos en el filtro");
+        }
+    });
+
+    // Literal 3: Conteo recursivo por marca
+    btnContar.addActionListener(e -> {
+        String marca = txtMarcaConteo.getText().trim();
+        int cantidad = registro.contarPorMarca(marca);
+        txtAreaConteo.setText("Cantidad: " + cantidad);
+    });
+}
+
+private void limpiarIngreso() {
+    txtCodigo.setText("");
+    txtMarca.setText("");
+    txtModelo.setText("");
+    txtPrecio.setText("");
+}
+
+private void mostrarEnArea(List<Automovil> lista, JTextArea area) {
+    StringBuilder sb = new StringBuilder();
+    for (Automovil a : lista) {
+        sb.append(a).append("\n");
+    }
+    area.setText(sb.toString());
+}
+
+public static void main(String[] args) {
+    JFrame frame = new JFrame("Automóviles - Evaluación Progreso 2 C");
+    frame.setContentPane(new Ventana().Principal);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.pack();
+    frame.setVisible(true);
+}
+
+}
